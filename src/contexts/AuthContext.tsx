@@ -150,12 +150,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const hasSupabase = isSupabaseConfigured() && supabase;
     if (hasSupabase) {
       try {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { data: { nome } },
         });
         if (error) return { error: error.message };
+        // If Supabase returns user/session, set local user so app continues using Supabase
+        const u = data?.user || data?.session?.user;
+        if (u) {
+          const userObj: User = {
+            id: u.id,
+            email: u.email || '',
+            nome: u.user_metadata?.nome || u.email?.split('@')[0] || nome || 'Usuário',
+          };
+          setUser(userObj);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userObj));
+        }
+        console.debug('Supabase signUp response:', data);
         return { error: null };
       } catch (err) {
         console.error('Supabase register error:', err);
