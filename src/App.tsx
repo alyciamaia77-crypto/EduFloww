@@ -62,7 +62,7 @@ function AppContent() {
         />
 
         {/* Main content */}
-          <div className="flex-1 flex flex-col min-w-0 transition-all">
+          <div className="flex-1 flex flex-col min-w-0 lg:ml-64 transition-all">
           <Header
             onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
             pageTitle={pageTitles[currentPage]}

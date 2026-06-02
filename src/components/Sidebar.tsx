@@ -36,7 +36,7 @@ export default function Sidebar({ open, onClose, currentPage, onNavigate }: Side
       {/* Sidebar: mobile (off-canvas) */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-indigo-950 to-indigo-900 text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl",
+          "fixed top-0 left-0 z-50 h-full w-64 bg-gradient-to-b from-indigo-950 to-indigo-900 text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl",
           open ? "translate-x-0" : "-translate-x-full",
           "lg:hidden"
         )}
@@ -111,8 +111,8 @@ export default function Sidebar({ open, onClose, currentPage, onNavigate }: Side
         </div>
       </aside>
 
-      {/* Sidebar: desktop (static, in-flow) */}
-      <aside className="hidden lg:flex lg:flex-col w-72 h-screen bg-gradient-to-b from-indigo-950 to-indigo-900 text-white shadow-none">
+      {/* Sidebar: desktop (fixed, in-flow effect via margin on main) */}
+      <aside className="hidden lg:flex lg:flex-col fixed top-0 left-0 z-50 w-64 h-screen overflow-y-auto bg-gradient-to-b from-indigo-950 to-indigo-900 text-white shadow-none">
         <div className="flex items-center gap-3 p-6 border-b border-white/10">
           <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
             <GraduationCap className="w-6 h-6 text-white" />
