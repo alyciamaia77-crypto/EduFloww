@@ -43,6 +43,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
         .catch((error) => {
           console.error('Supabase getSession error:', error);
+          // Fallback to local storage if Supabase is unreachable
+          const stored = localStorage.getItem(CURRENT_USER_KEY);
+          if (stored) {
+            try {
+              const u = JSON.parse(stored) as User;
+              setUser(u);
+            } catch (e) {
+              console.warn('Failed to parse local current user:', e);
+            }
+          }
         })
         .finally(() => setLoading(false));
 
@@ -54,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             nome: session.user.user_metadata?.nome || session.user.email?.split('@')[0] || 'Usuário',
           });
         } else {
+          // If Supabase signs out and there is a local session, clear it
           setUser(null);
         }
       });
