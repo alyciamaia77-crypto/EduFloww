@@ -119,10 +119,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Supabase login error:', err);
         const isNetworkError = err instanceof TypeError && String(err).includes('Failed to fetch');
+        if (isNetworkError) {
+          // Fallback: try local auth if Supabase is unreachable
+          const users: LocalUser[] = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]');
+          const found = users.find(u => u.email === email && u.password === password);
+          if (found) {
+            const u: User = { id: found.id, email: found.email, nome: found.nome };
+            setUser(u);
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(u));
+            return { error: null };
+          }
+          return { error: 'Não foi possível conectar ao Supabase. Tentativa de login local falhou.' };
+        }
         return {
-          error: isNetworkError
-            ? 'Não foi possível conectar ao Supabase. Verifique se a URL e a chave estão corretas e se o endereço do app está autorizado no dashboard do Supabase.'
-            : 'Falha ao conectar ao servidor de autenticação. Verifique sua conexão ou configuração do Supabase.',
+          error: 'Falha ao conectar ao servidor de autenticação. Verifique sua conexão ou configuração do Supabase.',
         };
       }
     } else {
@@ -150,6 +160,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Supabase register error:', err);
         const isNetworkError = err instanceof TypeError && String(err).includes('Failed to fetch');
+        if (isNetworkError) {
+          // Fallback: create local user if Supabase is unreachable
+          const users: LocalUser[] = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]');
+          if (users.find(u => u.email === email)) return { error: 'E-mail já cadastrado.' };
+          const newUser: LocalUser = {
+            id: crypto.randomUUID(),
+            email,
+            nome,
+            password,
+          };
+          users.push(newUser);
+          localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+          const u: User = { id: newUser.id, email: newUser.email, nome: newUser.nome };
+          setUser(u);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(u));
+          // Seed demo data for new user
+          const demo = generateDemoData(newUser.id);
+          localStorage.setItem(`eduflow_tarefas_${newUser.id}`, JSON.stringify(demo.tarefas));
+          localStorage.setItem(`eduflow_metas_${newUser.id}`, JSON.stringify(demo.metas));
+          return { error: null };
+        }
         return {
           error: isNetworkError
             ? 'Não foi possível conectar ao Supabase. Verifique se a URL e a chave estão corretas e se o endereço do app está autorizado no dashboard do Supabase.'
