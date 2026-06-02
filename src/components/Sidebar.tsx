@@ -28,7 +28,7 @@ export default function Sidebar({ open, onClose, currentPage, onNavigate }: Side
       {/* Overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm xl:hidden"
           onClick={onClose}
         />
       )}
@@ -38,7 +38,7 @@ export default function Sidebar({ open, onClose, currentPage, onNavigate }: Side
         className={cn(
           "fixed top-0 left-0 z-50 h-full w-72 bg-gradient-to-b from-indigo-950 to-indigo-900 text-white flex flex-col transition-transform duration-300 ease-in-out shadow-2xl",
           open ? "translate-x-0" : "-translate-x-full",
-          "md:translate-x-0 md:static md:z-auto md:shadow-none"
+          "xl:translate-x-0 xl:static xl:z-auto xl:shadow-none"
         )}
       >
         {/* Header */}
@@ -54,7 +54,7 @@ export default function Sidebar({ open, onClose, currentPage, onNavigate }: Side
           </div>
           <button
             onClick={onClose}
-            className="md:hidden p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            className="xl:hidden p-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

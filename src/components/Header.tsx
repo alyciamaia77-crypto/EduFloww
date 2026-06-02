@@ -25,16 +25,16 @@ export default function Header({ onMenuToggle, pageTitle }: HeaderProps) {
           variant="ghost"
           size="icon"
           onClick={onMenuToggle}
-          className="md:hidden"
+          className="xl:hidden"
         >
           <Menu className="w-5 h-5" />
         </Button>
         {/* Logo for mobile */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 xl:hidden">
           <GraduationCap className="w-6 h-6 text-indigo-600" />
           <span className="font-bold text-indigo-600">EduFlow</span>
         </div>
-        <h2 className="hidden md:block text-lg font-semibold text-gray-800 dark:text-gray-100">
+        <h2 className="hidden xl:block text-lg font-semibold text-gray-800 dark:text-gray-100">
           {pageTitle}
         </h2>
       </div>
