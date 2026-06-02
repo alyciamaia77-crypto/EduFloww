@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ error: string | null }>;
   register: (email: string, password: string, nome: string) => Promise<{ error: string | null }>;
   logout: () => void;
+  resetPassword: (email: string) => Promise<{ error: string | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -175,8 +176,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string): Promise<{ error: string | null }> => {
+    const hasSupabase = isSupabaseConfigured() && supabase;
+    if (hasSupabase) {
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        });
+        if (error) return { error: error.message };
+        return { error: null };
+      } catch (err) {
+        console.error('Supabase reset password error:', err);
+        const isNetworkError = err instanceof TypeError && String(err).includes('Failed to fetch');
+        return {
+          error: isNetworkError
+            ? 'Não foi possível conectar ao Supabase. Verifique se a URL e a chave estão corretas.'
+            : 'Falha ao enviar e-mail de recuperação. Tente novamente mais tarde.',
+        };
+      }
+    } else {
+      // Local auth: simulate password recovery
+      const users: LocalUser[] = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]');
+      const found = users.find(u => u.email === email);
+      if (!found) return { error: 'E-mail não encontrado.' };
+      // In local mode, just simulate success
+      return { error: null };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

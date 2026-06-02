@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BookOpen, Mail, Lock, User, Eye, EyeOff, GraduationCap } from 'lucide-react';
+import PasswordRecoveryModal from './PasswordRecoveryModal';
 
 export default function LoginPage() {
   const { login, register } = useAuth();
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const [form, setForm] = useState({ email: '', password: '', nome: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,6 +140,18 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {isLogin && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowRecoveryModal(true)}
+                  className="text-white/60 hover:text-white text-sm transition-colors underline"
+                >
+                  Esqueceu minha senha?
+                </button>
+              </div>
+            )}
+
             <Button
               type="submit"
               disabled={loading}
@@ -187,6 +201,12 @@ export default function LoginPage() {
             </div>
           ))}
         </div>
+
+        {/* Password Recovery Modal */}
+        <PasswordRecoveryModal
+          isOpen={showRecoveryModal}
+          onClose={() => setShowRecoveryModal(false)}
+        />
       </div>
     </div>
   );
